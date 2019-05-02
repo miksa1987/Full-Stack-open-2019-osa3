@@ -35,16 +35,20 @@ app.get('/info', (request, response) => {
 app.post('/api/persons', (request, response) => {
   if(!request.body.name || !request.body.number) {
       response.status(400).send({ error: 'Name or number missing!' })
-    }
-  if(persons.length > 0 && persons.some(person => person.name === request.body.name)) {
-    response.status(400).send({ error: 'Name must be unique!' })
   }
-  //const id = Math.round(Math.random() * 100000000)
+
   const person = new Person({ name: request.body.name, number: request.body.number })
   person.save().then(() => { 
     response.status(201).end()
   })
   .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response) => {
+  const person = { name: request.body.name, number: request.body.number }
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => response.json(updatedPerson.toJSON()))
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
