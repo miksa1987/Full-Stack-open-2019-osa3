@@ -2,6 +2,7 @@
 require('dotenv').config()
 const express = require('express')
 const Person = require('./models/person')
+const errorHandler = require('./middleware/errorhandler')
 
 const app = express()
 const bodyParser = require('body-parser')
@@ -12,6 +13,7 @@ morgan.token('body', req => JSON.stringify(req.body))
 app.use(bodyParser.json())
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 app.use(express.static('build'))
+app.use(errorHandler)
 
 let persons = []
 
@@ -42,6 +44,7 @@ app.post('/api/persons', (request, response) => {
   person.save().then(() => { 
     response.status(201).end()
   })
+  .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
