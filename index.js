@@ -21,16 +21,9 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  console.log(id)
-  const person = persons.find(person => person.id === id)
-  console.log(person.id)
-  if(person) {
-    response.json(person)
-  }
-  else {
-    response.status(404).end()
-  }
+  Person.findById(request.params.id)
+    .then(person => response.json(person.toJSON()))
+    .catch(error => response.status(404).send({ error: 'Cannot find person' }))
 })
 
 app.get('/info', (request, response) => {
