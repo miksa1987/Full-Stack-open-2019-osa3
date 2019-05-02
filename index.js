@@ -1,6 +1,10 @@
 // Here goes
 const express = require('express')
+
 const app = express()
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
 
 let persons = [
   {
@@ -43,6 +47,14 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.get('/info', (request, response) => {
   response.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot.<br> ${Date()}`)
+})
+
+app.post('/api/persons', (request, response) => {
+  const id = Math.round(Math.random() * 100000000)
+  const newPerson = { name: request.body.name, number: request.body.number, id: id}
+  persons.push(newPerson)
+
+  response.status(201).end()
 })
 
 app.delete('/api/persons/:id', (request, response) => {
