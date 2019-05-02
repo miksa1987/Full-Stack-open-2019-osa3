@@ -28,7 +28,6 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
-
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   console.log(id)
@@ -44,6 +43,13 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.get('/info', (request, response) => {
   response.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot.<br> ${Date()}`)
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  persons = persons.filter(person => person.id !== id)
+
+  response.status(204).end()
 })
 
 const PORT=3001
