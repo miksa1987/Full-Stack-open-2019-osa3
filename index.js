@@ -1,5 +1,7 @@
 // Here goes
+require('dotenv').config()
 const express = require('express')
+const Person = require('./models/person')
 
 const app = express()
 const bodyParser = require('body-parser')
@@ -11,30 +13,11 @@ app.use(bodyParser.json())
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 app.use(express.static('build'))
 
-let persons = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: 1
-  },
-  {
-    name: "Martti Tienari",
-    number: "040-123456",
-    id: 2
-  },
-  {
-    name: "Arto Järvinen",
-    number: "040-123456",
-    id: 3
-  },
-  {
-    name: "Lea Kutvonen",
-    number: "040-123456",
-    id: 4
-} ]
+let persons = []
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({ })
+    .then(persons => response.json(persons.map(person => person.toJSON())))
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -58,14 +41,14 @@ app.post('/api/persons', (request, response) => {
   if(!request.body.name || !request.body.number) {
       response.status(400).send({ error: 'Name or number missing!' })
     }
-  if(persons.some(person => person.name === request.body.name)) {
+  if(persons.length > 0 && persons.some(person => person.name === request.body.name)) {
     response.status(400).send({ error: 'Name must be unique!' })
   }
-  const id = Math.round(Math.random() * 100000000)
-  const newPerson = { name: request.body.name, number: request.body.number, id: id}
-  persons.push(newPerson)
-
-  response.status(201).end()
+  //const id = Math.round(Math.random() * 100000000)
+  const person = new Person({ name: request.body.name, number: request.body.number })
+  person.save().then(() => { 
+    response.status(201).end()
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
