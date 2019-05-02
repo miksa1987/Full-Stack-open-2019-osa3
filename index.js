@@ -50,6 +50,12 @@ app.get('/info', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
+  if(!request.body.name || !request.body.number) {
+      response.status(400).send({ error: 'Name or number missing!' })
+    }
+  if(persons.some(person => person.name === request.body.name)) {
+    response.status(400).send({ error: 'Name must be unique!' })
+  }
   const id = Math.round(Math.random() * 100000000)
   const newPerson = { name: request.body.name, number: request.body.number, id: id}
   persons.push(newPerson)
