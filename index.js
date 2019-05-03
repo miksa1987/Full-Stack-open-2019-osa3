@@ -11,10 +11,10 @@ morgan.token('body', req => JSON.stringify(req.body))
 
 const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError' && error.kind == 'ObjectId') {
-      return response.status(400).send({ error: 'malformatted id' })
+    return response.status(400).send({ error: 'malformatted id' })
   }
   if (error.name === 'ValidationError') {
-      return response.status(400).send({ error: 'Name must be unique!' })
+    return response.status(400).send({ error: 'Name must be unique!' })
   }
 
   next(error)
@@ -23,8 +23,6 @@ const errorHandler = (error, request, response, next) => {
 app.use(bodyParser.json())
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 app.use(express.static('build'))
-
-let persons = []
 
 app.get('/api/persons', (request, response) => {
   Person.find({ })
@@ -44,14 +42,14 @@ app.get('/info', (request, response) => {
 
 app.post('/api/persons', (request, response, next) => {
   if(!request.body.name || !request.body.number) {
-      response.status(400).send({ error: 'Name or number missing!' })
+    response.status(400).send({ error: 'Name or number missing!' })
   }
 
   const person = new Person({ name: request.body.name, number: request.body.number })
   person.save().then(() => { 
     response.status(201).end()
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
